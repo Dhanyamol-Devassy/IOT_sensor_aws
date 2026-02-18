@@ -71,3 +71,4 @@ QuickSight dashboards were created with the following visuals:
 7. Conclusion
 This project demonstrates an end-to-end IoT anomaly detection pipeline using AWS cloud-native services. It highlights data engineering best practices including layered architecture, serverless anomaly detection, real-time alerting, and cost-efficient visualization. The architecture is extensible to support larger datasets, more complex ML models, and integration with real-time streaming data sources.
 
+
