@@ -63,12 +63,15 @@ Common issues encountered and their fixes:
 6. Visualizations
 
 QuickSight dashboards were created with the following visuals:
+
 1. Anomalies over time (Line chart)
 2. Anomalies by device (Bar chart)
 3. Average sensor values by location (Heatmap)
 4. Summary statistics (Table)
 
 7. Conclusion
+
 This project demonstrates an end-to-end IoT anomaly detection pipeline using AWS cloud-native services. It highlights data engineering best practices including layered architecture, serverless anomaly detection, real-time alerting, and cost-efficient visualization. The architecture is extensible to support larger datasets, more complex ML models, and integration with real-time streaming data sources.
+
 
 
