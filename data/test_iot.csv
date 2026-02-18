@@ -1,0 +1,4 @@
+event_time,device_id,temp_c,humidity_pc,vibration_g,location
+2025-09-24T10:00:00Z,dev-001,22.1,50.2,0.8,Toronto
+2025-09-24T10:01:00Z,dev-001,95.0,10.0,8.0,Toronto
+2025-09-24T10:02:00Z,dev-002,23.5,49.8,1.0,New York

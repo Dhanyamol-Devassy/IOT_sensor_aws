@@ -1,0 +1,89 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - postgres_db_volume:/var/lib/postgresql/data
+
+  airflow-init:
+    image: apache/airflow:2.9.1
+    depends_on:
+      - postgres
+    env_file:
+      - ./config/airflow.env
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - _AIRFLOW_DB_UPGRADE=true
+      - _AIRFLOW_WWW_USER_CREATE=true
+      - _AIRFLOW_WWW_USER_USERNAME=airflow
+      - _AIRFLOW_WWW_USER_PASSWORD=airflow
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - |
+        pip install --no-cache-dir -r /requirements.txt &&
+        airflow db upgrade &&
+        airflow users create \
+          --username airflow \
+          --firstname Admin \
+          --lastname User \
+          --role Admin \
+          --email admin@example.com \
+          --password airflow
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./scripts:/opt/airflow/scripts
+      - ./requirements.txt:/requirements.txt
+      - airflow_tmp_volume:/opt/airflow/tmp
+
+  webserver:
+    image: apache/airflow:2.9.1
+    restart: always
+    depends_on:
+      - postgres
+    env_file:
+      - ./config/airflow.env
+    ports:
+      - "8081:8080"
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./scripts:/opt/airflow/scripts
+      - ./requirements.txt:/requirements.txt
+      - airflow_tmp_volume:/opt/airflow/tmp
+    command: bash -c "pip install --no-cache-dir -r /requirements.txt && airflow webserver"
+
+  scheduler:
+    image: apache/airflow:2.9.1
+    restart: always
+    depends_on:
+      - webserver
+      - postgres
+    env_file:
+      - ./config/airflow.env
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./scripts:/opt/airflow/scripts
+      - ./requirements.txt:/requirements.txt
+      - airflow_tmp_volume:/opt/airflow/tmp
+    command: bash -c "pip install --no-cache-dir -r /requirements.txt && airflow scheduler"
+
+volumes:
+  postgres_db_volume:
+  airflow_tmp_volume:
+    driver: local
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
+      o: uid=50000,gid=0,mode=1777

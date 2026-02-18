@@ -1,0 +1,8 @@
+{
+  "Version":"2012-10-17",
+  "Statement":[
+    {"Effect":"Allow","Action":["logs:CreateLogGroup","logs:CreateLogStream","logs:PutLogEvents"],"Resource":"*"},
+    {"Effect":"Allow","Action":["sns:Publish"],"Resource":"*"},
+    {"Effect":"Allow","Action":["s3:GetObject","s3:GetObjectAttributes"],"Resource":"arn:aws:s3:::*/*"}
+  ]
+}
